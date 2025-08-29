@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace "io.github.xpra.3rdparty.grafika"
+    namespace "com.android.grafika"
     
     compileSdkVersion 34
     defaultConfig {
