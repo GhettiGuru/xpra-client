@@ -46,7 +46,7 @@ android {
             keyPassword project.property('keyPassword')
             v1SigningEnabled true
             v2SigningEnabled true
-            v3SigningEnabled false  // Disabled due to compatibility issues, enable if stable in your environment
+            //v3SigningEnabled false  // Disabled due to compatibility issues, enable if stable in your environment
         }
     }
     buildTypes {
