@@ -48,8 +48,7 @@ android {
         keyPassword project.property("keyPassword")
 
         v1SigningEnabled true
-        v2SigningEnabled false
-        v3SigningEnabled true
+        v2SigningEnabled true
         
         }
     }
