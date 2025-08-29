@@ -32,7 +32,7 @@ jobs:
       - name: Build APK and sign
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
-          KEY_ALIAS: "your-key-alias"
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
         run: ./gradlew assembleRelease -PkeystoreFile=release.keystore -PkeystorePassword=$KEYSTORE_PASSWORD -PkeyAlias=$KEY_ALIAS -PkeyPassword=$KEY_PASSWORD
 
