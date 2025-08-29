@@ -40,10 +40,10 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file(project.property('keystoreFile'))
-            storePassword project.property('keystorePassword')
-            keyAlias project.property('keyAlias')
-            keyPassword project.property('keyPassword')
+            storeFile file(project.findProperty('MYAPP_RELEASE_STORE_FILE') ?: System.getenv('KEYSTORE_FILE'))
+            storePassword project.findProperty('MYAPP_RELEASE_STORE_PASSWORD') ?: System.getenv('STORE_PASSWORD')
+            keyAlias project.findProperty('MYAPP_RELEASE_KEY_ALIAS') ?: System.getenv('KEY_ALIAS')
+            keyPassword project.findProperty('MYAPP_RELEASE_KEY_PASSWORD') ?: System.getenv('KEY_PASSWORD')
             v1SigningEnabled true
             v2SigningEnabled true
             //v3SigningEnabled false  // Disabled due to compatibility issues, enable if stable in your environment
