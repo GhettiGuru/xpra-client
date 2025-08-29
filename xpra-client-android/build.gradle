@@ -11,8 +11,9 @@ assert ext.versionMinor < 100
 version = "${ext.versionMajor}.${ext.versionMinor}"
 
 android {
+    namespace "io.github.xpra.client"
+    
     compileSdkVersion 34
-
     defaultConfig {
         applicationId "io.github.xpra.client"
         minSdkVersion 25
@@ -20,9 +21,7 @@ android {
         versionCode = versionMajor * 100 + versionMinor
         versionName version
         archivesBaseName = "${project.name}-$versionName"
-
         renderscriptTargetApi 25
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
