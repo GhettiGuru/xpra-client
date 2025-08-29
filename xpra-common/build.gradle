@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm
+    id 'org.jetbrains.kotlin.jvm'
     // Apply other needed plugins here, e.g., 'java-library' if this is a library module
     id 'java-library'
 }
