@@ -19,9 +19,18 @@
 buildscript {
     ext.kotlin_version = '1.8.22'
     repositories {
-        google()
-        mavenCentral()
+    google()
+    mavenCentral()
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/jksiezni") // Replace 'jksiezni' with correct GitHub user/org if needed
+        credentials {
+            username = findProperty("GH_USERNAME") ?: System.getenv("GH_USERNAME")
+            password = findProperty("GH_TOKEN") ?: System.getenv("GH_TOKEN")
+        }
     }
+}
+
     dependencies {
         classpath 'com.android.tools.build:gradle:8.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
