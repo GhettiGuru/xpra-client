@@ -41,17 +41,16 @@ android {
     }
 
     signingConfigs {
-        release {
-            // Replace with your actual keystore file and passwords or use project properties for CI
-            storeFile file("your_keystore.jks")
-            storePassword "your_keystore_password"
-            keyAlias "your_key_alias"
-            keyPassword "your_key_password"
+    release {
+        storeFile file(project.property("keystoreFile"))
+        storePassword project.property("keystorePassword")
+        keyAlias project.property("keyAlias")
+        keyPassword project.property("keyPassword")
 
-            // Enable only v1 and v3 signing schemes
-            v1SigningEnabled true
-            v2SigningEnabled false
-            v3SigningEnabled true
+        v1SigningEnabled true
+        v2SigningEnabled false
+        v3SigningEnabled true
+        
         }
     }
 
