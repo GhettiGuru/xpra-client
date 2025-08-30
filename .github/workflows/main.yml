@@ -6,6 +6,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GRADLE_USER_HOME: ${{ runner.temp }}/.gradle
+
     steps:
       # Checkout main xpra-client repo
       - name: Checkout xpra-client
@@ -36,13 +39,13 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # Cache Gradle dependencies and wrapper to speed up builds
+      # Cache Gradle dependencies to speed up builds
       - name: Cache Gradle
         uses: actions/cache@v3
         with:
           path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
+            ${{ runner.temp }}/.gradle/caches
+            ${{ runner.temp }}/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/gradle.lockfile') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
@@ -51,28 +54,19 @@ jobs:
       - name: Decode keystore
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
 
-      # Build and publish rencode4j module locally
+      # Build and publish rencode4j locally
       - name: Build and publish rencode4j
         working-directory: ./rencode4j
         run: |
-          ./gradlew build publishToMavenLocal
+          ./gradlew clean build publishToMavenLocal
 
-      # Build and publish bee-encode module locally
+      # Build and publish bee-encode locally
       - name: Build and publish bee-encode
         working-directory: ./bee-encode
         run: |
-          ./gradlew build publishToMavenLocal
-          
-    
-     # Copy built jars to xpra-client/libs
-          
-      - name: Copy dependency jars to xpra-client libs
-        run: |
-         mkdir -p xpra-client/3rdparty/grafika/libs/
-         cp rencode4j/build/libs/rencode4j-*.jar xpra-client/3rdparty/grafika/libs/
-         cp bee-encode/build/libs/bee-encode-*.jar xpra-client/3rdparty/grafika/libs/
+          ./gradlew clean build publishToMavenLocal
 
-      # Build xpra-client module which depends on local Maven artifacts
+      # Build xpra-client module using local Maven artifacts
       - name: Build xpra-client
         working-directory: ./xpra-client
         env:
@@ -81,9 +75,11 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-           export GH_USERNAME="${{ secrets.GH_USERNAME }}"
-           export GH_TOKEN="${{ secrets.GH_TOKEN }}"
-           ./gradlew clean build -PkeystoreFile=$KEYSTORE_FILE -PkeystorePassword=$STORE_PASSWORD -PkeyAlias=$KEY_ALIAS -PkeyPassword=$KEY_PASSWORD
+          ./gradlew clean build \
+            -PkeystoreFile=$KEYSTORE_FILE \
+            -PkeystorePassword=$STORE_PASSWORD \
+            -PkeyAlias=$KEY_ALIAS \
+            -PkeyPassword=$KEY_PASSWORD
 
       # Upload the APK artifact
       - name: Upload APK artifact
