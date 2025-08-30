@@ -54,8 +54,4 @@ allprojects {
     }
 }
 
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    // Add other dependencies below
-    // implementation 'com.some.library:version'
 }
