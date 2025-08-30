@@ -1,26 +1,42 @@
 name: Android CI
-
 on:
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      # Checkout main repo (xpra-client)
+      - name: Checkout main repo
         uses: actions/checkout@v3
+      
+      # Checkout rencode4j repo into rencode4j directory
+      - name: Checkout rencode4j
+        uses: actions/checkout@v3
+        with:
+          repository: GhettiGuru/rencode4j
+          path: rencode4j
+          token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Checkout bee-encode repo into bee-encode directory
+      - name: Checkout bee-encode
+        uses: actions/checkout@v3
+        with:
+          repository: GhettiGuru/bee-encode
+          path: bee-encode
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Setup JDK 17
       - name: Setup JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: 17
 
+      # Decode keystore
       - name: Decode keystore
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
 
+      # Cache Gradle
       - name: Cache Gradle
         uses: actions/cache@v3
         with:
@@ -29,13 +45,31 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/gradle.lockfile') }}
 
-      - name: Build APK and sign
+      # Build and publish rencode4j locally
+      - name: Build and publish rencode4j
+        working-directory: ./rencode4j
+        run: |
+          ./gradlew build
+          ./gradlew publishToMavenLocal
+
+      # Build and publish bee-encode locally
+      - name: Build and publish bee-encode
+        working-directory: ./bee-encode
+        run: |
+          ./gradlew build
+          ./gradlew publishToMavenLocal
+
+      # Build main project (xpra-client) which uses local Maven artifacts
+      - name: Build main xpra-client project
         env:
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
+          KEYSTORE_FILE: release.keystore
+          STORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
-        run: ./gradlew assembleRelease -PkeystoreFile=release.keystore -PkeystorePassword=$KEYSTORE_PASSWORD -PkeyAlias=$KEY_ALIAS -PkeyPassword=$KEY_PASSWORD
+        run: |
+          ./gradlew build -PkeystoreFile=$KEYSTORE_FILE -PkeystorePassword=$STORE_PASSWORD -PkeyAlias=$KEY_ALIAS -PkeyPassword=$KEY_PASSWORD
 
+      # Upload APK artifact if applicable
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
