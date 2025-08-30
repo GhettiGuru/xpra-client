@@ -19,27 +19,21 @@
 buildscript {
     ext.kotlin_version = '1.8.22'
     repositories {
-    google()
-    mavenLocal()
-    mavenCentral()
-    maven {
-        name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/GhettiGuru") // Replace 'jksiezni' with correct GitHub user/org if needed
-        credentials {
-            username = findProperty("GH_USERNAME") ?: System.getenv("GH_USERNAME")
-            password = findProperty("GH_TOKEN") ?: System.getenv("GH_TOKEN")
+        google()
+        mavenLocal()
+        mavenCentral()
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/GhettiGuru") // Replace with correct GitHub org/user
+            credentials {
+                username = findProperty("GH_USERNAME") ?: System.getenv("GH_USERNAME")
+                password = findProperty("GH_TOKEN") ?: System.getenv("GH_TOKEN")
+            }
         }
     }
-}
-
     dependencies {
         classpath 'com.android.tools.build:gradle:8.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        dependencies {
-        implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-        }
-        
     }
 }
 
@@ -48,5 +42,20 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        mavenLocal()
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/GhettiGuru") // Replace accordingly
+            credentials {
+                username = findProperty("GH_USERNAME") ?: System.getenv("GH_USERNAME")
+                password = findProperty("GH_TOKEN") ?: System.getenv("GH_TOKEN")
+            }
+        }
     }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // Add other dependencies below
+    // implementation 'com.some.library:version'
 }
