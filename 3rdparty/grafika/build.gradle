@@ -37,10 +37,21 @@ repositories {
     mavenLocal()
     google()
     mavenCentral()
+    maven {
+        url = uri("https://maven.pkg.github.com/GhettiGuru")
+        credentials {
+            username = findProperty("GH_USERNAME") ?: System.getenv("GH_USERNAME")
+            password = findProperty("GH_TOKEN") ?: System.getenv("GH_TOKEN")
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    // Uncomment if you want to include locally published artifacts
+    // implementation 'com.github.GhettiGuru:bee-encode:0.3'
+    // implementation 'com.github.GhettiGuru:rencode4j:1.2.0'
 }
