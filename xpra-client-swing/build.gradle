@@ -15,19 +15,19 @@
  *     with this program; if not, write to the Free Software Foundation, Inc.,
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 apply plugin: 'java'
 apply plugin:'application'
-
 mainClassName = "xpra.swing.Launcher"
-
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
 dependencies {
     implementation project(':xpra-common')
-
     implementation 'org.slf4j:slf4j-simple:1.7.12'
-
     testImplementation 'junit:junit:4.13'
 }
