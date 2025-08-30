@@ -15,19 +15,34 @@
  *     with this program; if not, write to the Free Software Foundation, Inc.,
  *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-apply plugin: 'java'
-apply plugin:'application'
+
+plugins {
+    id 'java'
+    id 'application'
+}
+
 mainClassName = "xpra.swing.Launcher"
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
 repositories {
-    mavenLocal()
+    mavenLocal()   // Must be first for your locally published jars
     mavenCentral()
 }
 
 dependencies {
     implementation project(':xpra-common')
+
+    // Local Maven dependencies
+    implementation 'com.github.GhettiGuru:bee-encode:0.3'
+    implementation 'com.github.GhettiGuru:rencode4j:1.2.0'
+
+    // Logging
     implementation 'org.slf4j:slf4j-simple:1.7.12'
+
+    // Testing
     testImplementation 'junit:junit:4.13'
 }
