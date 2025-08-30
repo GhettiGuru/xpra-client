@@ -48,8 +48,8 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
-    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0'
+    implementation 'com.jakewharton.timber:timber:5.0.1'
 
     // Uncomment if you want to include locally published artifacts
     // implementation 'com.github.GhettiGuru:bee-encode:0.3'

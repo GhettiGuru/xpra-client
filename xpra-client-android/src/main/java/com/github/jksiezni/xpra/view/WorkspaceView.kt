@@ -1,19 +1,19 @@
 /*
  * Copyright (C) 2020 Jakub Ksiezniak
  *
- *     This program is free software; you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation; either version 2 of the License, or
- *     (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License along
- *     with this program; if not, write to the Free Software Foundation, Inc.,
- *     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 package com.github.jksiezni.xpra.view
 
@@ -52,6 +52,10 @@ class WorkspaceView : FrameLayout {
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+        // FIX: Added a null check for the MotionEvent before passing it to the gesture detector.
+        if (event == null) {
+            return super.onTouchEvent(event)
+        }
         return gestureDetector.onTouchEvent(event) || super.onTouchEvent(event)
     }
 
@@ -84,7 +88,7 @@ class WorkspaceView : FrameLayout {
                 onScrollChanged(scrollX, scrollY, oldX, oldY)
             }
 
-            if (!awakenScrollBars()) {
+            if (!scroller.isFinished) {
                 // Keep on drawing until the animation has finished.
                 postInvalidateOnAnimation()
             }
@@ -96,7 +100,7 @@ class WorkspaceView : FrameLayout {
         awakenScrollBars()
     }
 
-    override fun onViewRemoved(child: View?) {
+    override fun onViewRemoved(child: View) {
         super.onViewRemoved(child)
         val range = getScrollRange()
         val viewport = Rect().apply { getDrawingRect(this) }
@@ -125,18 +129,20 @@ class WorkspaceView : FrameLayout {
             return true
         }
 
-        override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+        // FIX: Corrected signature to match the interface by making e1 nullable (MotionEvent?).
+        override fun onScroll(e1: MotionEvent?, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
             scroller.forceFinished(true)
             scrollBy(distanceX.toInt(), distanceY.toInt())
             return true
         }
 
-        override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+        // FIX: Corrected signature to match the interface by making e1 nullable (MotionEvent?).
+        override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
             val bounds = getScrollRange()
             scroller.forceFinished(true)
             scroller.fling(scrollX, scrollY, -velocityX.toInt(), -velocityY.toInt(),
-                    bounds.left, bounds.right-width,
-                    bounds.top, bounds.bottom-height)
+                    bounds.left, bounds.right - width,
+                    bounds.top, bounds.bottom - height)
             postInvalidateOnAnimation()
             return true
         }

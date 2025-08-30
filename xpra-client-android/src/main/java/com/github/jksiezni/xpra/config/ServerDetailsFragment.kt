@@ -161,10 +161,13 @@ class ServerDetailsFragment : PreferenceFragmentCompat() {
 
 class EditTextSummaryProvider(private val emptySummary: String) : SummaryProvider<EditTextPreference> {
     override fun provideSummary(preference: EditTextPreference): CharSequence {
-        return if (TextUtils.isEmpty(preference.text)) {
+        // Copy preference.text to a local immutable variable
+        val text = preference.text
+        return if (text.isNullOrEmpty()) {
             emptySummary
         } else {
-            preference.text
+            // Now the compiler knows 'text' is not null here
+            text
         }
     }
 }
@@ -172,7 +175,7 @@ class EditTextSummaryProvider(private val emptySummary: String) : SummaryProvide
 class DisplayIdSummaryProvider(private val emptySummary: String) : SummaryProvider<EditTextPreference> {
     override fun provideSummary(preference: EditTextPreference): CharSequence {
         val text = preference.text
-        return if (TextUtils.isEmpty(text) || "-1" == text) {
+        return if (text.isNullOrEmpty() || "-1" == text) {
             emptySummary
         } else {
             text

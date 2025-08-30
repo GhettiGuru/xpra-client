@@ -72,7 +72,8 @@ class ServerDetailsAdapter : ListAdapter<ServerDetails, ServerDetailsAdapter.Vie
         }
         val context = holder.itemView.context
         if (connected) {
-            holder.secondaryBtn.setTextColor(ColorStateList.valueOf(context.getColor(R.color.design_default_color_error)))
+            val errorColor = com.google.android.material.color.MaterialColors.getColor(context, com.google.android.material.R.attr.colorError, android.graphics.Color.RED)
+holder.secondaryBtn.setTextColor(ColorStateList.valueOf(errorColor))
             holder.secondaryBtn.setText(R.string.disconnect)
             holder.primaryBtn.setText(R.string.open)
         }
