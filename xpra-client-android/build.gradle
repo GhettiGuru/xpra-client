@@ -125,7 +125,7 @@ dependencies {
     // Utilities
     implementation 'com.google.guava:guava:31.0-android'
     implementation 'com.jakewharton.timber:timber:5.0.1'
-    implementation 'com.arcao:slf4j-timber:3.2'
+    implementation 'com.arcao:slf4j-timber:3.1'
 
     // Testing
     testImplementation 'junit:junit:4.13.1'
