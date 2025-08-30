@@ -81,7 +81,9 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          ./gradlew clean build -PkeystoreFile=$KEYSTORE_FILE -PkeystorePassword=$STORE_PASSWORD -PkeyAlias=$KEY_ALIAS -PkeyPassword=$KEY_PASSWORD
+           export GH_USERNAME="${{ secrets.GH_USERNAME }}"
+           export GH_TOKEN="${{ secrets.GH_TOKEN }}"
+           ./gradlew clean build -PkeystoreFile=$KEYSTORE_FILE -PkeystorePassword=$STORE_PASSWORD -PkeyAlias=$KEY_ALIAS -PkeyPassword=$KEY_PASSWORD
 
       # Upload the APK artifact
       - name: Upload APK artifact
