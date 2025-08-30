@@ -1,9 +1,69 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+ext {
+    versionMajor = 1
+    versionMinor = 0
+    kotlin_version = '1.8.22'
+}
+assert ext.versionMinor < 100
+version = "${ext.versionMajor}.${ext.versionMinor}"
+
+android {
+    namespace "io.github.xpra.client"
+    compileSdkVersion 34
+
+    defaultConfig {
+        applicationId "io.github.xpra.client"
+        minSdkVersion 25
+        targetSdkVersion 34
+        versionCode = versionMajor * 100 + versionMinor
+        versionName version
+        archivesBaseName = "${project.name}-$versionName"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions { jvmTarget = '17' }
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
+
+    buildFeatures { viewBinding true }
+
+    signingConfigs {
+        release {
+            storeFile file(project.findProperty('MYAPP_RELEASE_STORE_FILE') ?: System.getenv('KEYSTORE_FILE'))
+            storePassword project.findProperty('MYAPP_RELEASE_STORE_PASSWORD') ?: System.getenv('STORE_PASSWORD')
+            keyAlias project.findProperty('MYAPP_RELEASE_KEY_ALIAS') ?: System.getenv('KEY_ALIAS')
+            keyPassword project.findProperty('MYAPP_RELEASE_KEY_PASSWORD') ?: System.getenv('KEY_PASSWORD')
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+}
+
 repositories {
     mavenLocal()
     google()
     mavenCentral()
+    // GitHub Packages for dependencies
     maven {
-        name = "GitHubPackages"
         url = uri("https://maven.pkg.github.com/GhettiGuru")
         credentials {
             username = findProperty("GH_USERNAME") ?: System.getenv("GH_USERNAME") ?: ""
@@ -20,9 +80,10 @@ dependencies {
     // Kotlin stdlib
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    // GitHub Packages dependencies (use root repo)
+    // GitHub Packages dependencies
     implementation 'com.github.GhettiGuru:bee-encode:0.3'
     implementation 'com.github.GhettiGuru:rencode4j:1.2.0'
+    implementation 'com.arcao:slf4j-timber:3.1'
 
     // AndroidX / lifecycle / coroutines
     def coroutines_version = '1.4.2'
@@ -54,7 +115,6 @@ dependencies {
     // Utilities
     implementation 'com.google.guava:guava:31.0-android'
     implementation 'com.jakewharton.timber:timber:5.0.1'
-    implementation 'com.arcao:slf4j-timber:3.1'
 
     // Testing
     testImplementation 'junit:junit:4.13.1'
