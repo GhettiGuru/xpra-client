@@ -55,13 +55,13 @@ jobs:
       - name: Build and publish rencode4j
         working-directory: ./rencode4j
         run: |
-          ./gradlew clean build publishToMavenLocal
+          ./gradlew build publishToMavenLocal
 
       # Build and publish bee-encode module locally
       - name: Build and publish bee-encode
         working-directory: ./bee-encode
         run: |
-          ./gradlew clean build publishToMavenLocal
+          ./gradlew build publishToMavenLocal
           
     
      # Copy built jars to xpra-client/libs
