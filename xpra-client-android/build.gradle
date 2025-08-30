@@ -63,14 +63,22 @@ android {
 }
 
 repositories {
-    mavenLocal() // highest priority for locally published jars
+    mavenLocal() // priority for locally published jars
     google()
     mavenCentral()
+    // GitHub Packages for both artifacts
     maven {
-        url = uri("https://maven.pkg.github.com/GhettiGuru")
+        url = uri("https://maven.pkg.github.com/GhettiGuru/bee-encode")
         credentials {
-            username = findProperty("GH_USERNAME") ?: System.getenv("GH_USERNAME")
-            password = findProperty("GH_TOKEN") ?: System.getenv("GH_TOKEN")
+            username = findProperty("GH_USERNAME") ?: System.getenv("GH_USERNAME") ?: ""
+            password = findProperty("GH_TOKEN") ?: System.getenv("GH_TOKEN") ?: ""
+        }
+    }
+    maven {
+        url = uri("https://maven.pkg.github.com/GhettiGuru/rencode4j")
+        credentials {
+            username = findProperty("GH_USERNAME") ?: System.getenv("GH_USERNAME") ?: ""
+            password = findProperty("GH_TOKEN") ?: System.getenv("GH_TOKEN") ?: ""
         }
     }
 }
@@ -83,7 +91,7 @@ dependencies {
     // Kotlin stdlib
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    // Local maven dependencies
+    // GitHub Packages dependencies
     implementation 'com.github.GhettiGuru:bee-encode:0.3'
     implementation 'com.github.GhettiGuru:rencode4j:1.2.0'
 
