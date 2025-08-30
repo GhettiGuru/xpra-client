@@ -72,7 +72,10 @@ jobs:
           mkdir -p xpra-client/3rdparty/grafika/libs/
           cp rencode4j/build/libs/rencode4j-*.jar xpra-client/3rdparty/grafika/libs/
           cp bee-encode/build/libs/bee-encode-*.jar xpra-client/3rdparty/grafika/libs/
-
+          mkdir -p xpra-client/xpra-common/libs/
+          cp rencode4j/build/libs/rencode4j-*.jar xpra-client/xpra-common/libs/
+          cp bee-encode/build/libs/bee-encode-*.jar xpra-client/xpra-common/libs/
+          
       # 10. Build xpra-client module using local Maven artifacts
       - name: Build xpra-client
         working-directory: ./xpra-client
