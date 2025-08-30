@@ -58,6 +58,12 @@ android {
     }
 }
 
+repositories {
+    mavenLocal()
+    google()
+    mavenCentral()
+}
+
 dependencies {
     implementation project(':xpra-common')
     implementation project(':3rdparty:grafika')
