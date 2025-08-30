@@ -9,14 +9,22 @@ java {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/GhettiGuru") // replace with your org/user if different
+        credentials {
+            username = findProperty("GH_USERNAME") ?: System.getenv("GH_USERNAME")
+            password = findProperty("GH_TOKEN") ?: System.getenv("GH_TOKEN")
+        }
+    }
 }
 
 dependencies {
-    // Local jars instead of GitHub Packages
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
+    implementation 'com.github.GhettiGuru:bee-encode:0.3'
+    implementation 'com.github.GhettiGuru:rencode4j:1.2.0'
     api 'org.slf4j:slf4j-api:1.7.25'
     api 'com.jcraft:jsch:0.1.52'
     testImplementation 'junit:junit:4.13.1'
