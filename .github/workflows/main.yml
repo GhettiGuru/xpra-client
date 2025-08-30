@@ -52,21 +52,27 @@ jobs:
       - name: Decode keystore
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
 
-      # 7. Build and publish rencode4j locally
-      - name: Build and publish rencode4j
+      # 7. Build and publish rencode4j to GitHub Packages
+      - name: Publish rencode4j to GitHub Packages
         working-directory: ./rencode4j
+        env:
+          GH_USERNAME: ${{ secrets.GH_USERNAME }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           export GRADLE_USER_HOME="$RUNNER_TEMP/.gradle"
-          ./gradlew build publishToMavenLocal
+          ./gradlew build publish
 
-      # 8. Build and publish bee-encode locally
-      - name: Build and publish bee-encode
+      # 8. Build and publish bee-encode to GitHub Packages
+      - name: Publish bee-encode to GitHub Packages
         working-directory: ./bee-encode
+        env:
+          GH_USERNAME: ${{ secrets.GH_USERNAME }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           export GRADLE_USER_HOME="$RUNNER_TEMP/.gradle"
-          ./gradlew build publishToMavenLocal
+          ./gradlew build publish
 
-      # 9. Copy built jars to xpra-client libs (if needed)
+      # 9. Copy built jars to xpra-client libs (optional, fallback)
       - name: Copy dependency jars to xpra-client libs
         run: |
           mkdir -p xpra-client/3rdparty/grafika/libs/
@@ -76,7 +82,7 @@ jobs:
           cp rencode4j/build/libs/rencode4j-*.jar xpra-client/xpra-common/libs/
           cp bee-encode/build/libs/bee-encode-*.jar xpra-client/xpra-common/libs/
           
-      # 10. Build xpra-client module using local Maven artifacts
+      # 10. Build xpra-client module using published or local artifacts
       - name: Build xpra-client
         working-directory: ./xpra-client
         env:
@@ -84,9 +90,9 @@ jobs:
           STORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          GH_USERNAME: ${{ secrets.GH_USERNAME }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          export GH_USERNAME="${{ secrets.GH_USERNAME }}"
-          export GH_TOKEN="${{ secrets.GH_TOKEN }}"
           export GRADLE_USER_HOME="$RUNNER_TEMP/.gradle"
           ./gradlew clean build \
             -PkeystoreFile=$KEYSTORE_FILE \
