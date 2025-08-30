@@ -9,17 +9,23 @@ java {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven {
-        name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/GhettiGuru") // replace with your org/user if different
+        url = uri("https://maven.pkg.github.com/GhettiGuru/bee-encode")
         credentials {
-            username = findProperty("GH_USERNAME") ?: System.getenv("GH_USERNAME")
-            password = findProperty("GH_TOKEN") ?: System.getenv("GH_TOKEN")
+            username = System.getenv("GH_USERNAME") ?: ""
+            password = System.getenv("GH_TOKEN") ?: ""
+        }
+    }
+    maven {
+        url = uri("https://maven.pkg.github.com/GhettiGuru/rencode4j")
+        credentials {
+            username = System.getenv("GH_USERNAME") ?: ""
+            password = System.getenv("GH_TOKEN") ?: ""
         }
     }
 }
+
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
