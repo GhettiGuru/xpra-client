@@ -63,24 +63,24 @@ jobs:
         #  ./gradlew build publish
 
       # 8. Build and publish bee-encode to GitHub Packages
-      - name: Publish bee-encode to GitHub Packages
-        working-directory: ./bee-encode
-        env:
-          GH_USERNAME: ${{ secrets.GH_USERNAME }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          export GRADLE_USER_HOME="$RUNNER_TEMP/.gradle"
-          ./gradlew build publish
+    #  - name: Publish bee-encode to GitHub Packages
+        #working-directory: ./bee-encode
+       # env:
+         # GH_USERNAME: ${{ secrets.GH_USERNAME }}
+       #   GH_TOKEN: ${{ secrets.GH_TOKEN }}
+       # run: |
+         # export GRADLE_USER_HOME="$RUNNER_TEMP/.gradle"
+          #./gradlew build publish
 
       # 9. Copy built jars to xpra-client libs (optional, fallback)
-      - name: Copy dependency jars to xpra-client libs
-        run: |
-          mkdir -p xpra-client/3rdparty/grafika/libs/
+     # - name: Copy dependency jars to xpra-client libs
+       # run: |
+       #   mkdir -p xpra-client/3rdparty/grafika/libs/
           #cp rencode4j/build/libs/rencode4j-*.jar xpra-client/3rdparty/grafika/libs/
-          cp bee-encode/build/libs/bee-encode-*.jar xpra-client/3rdparty/grafika/libs/
-          mkdir -p xpra-client/xpra-common/libs/
+       #   cp bee-encode/build/libs/bee-encode-*.jar xpra-client/3rdparty/grafika/libs/
+          #mkdir -p xpra-client/xpra-common/libs/
           #cp rencode4j/build/libs/rencode4j-*.jar xpra-client/xpra-common/libs/
-          cp bee-encode/build/libs/bee-encode-*.jar xpra-client/xpra-common/libs/
+         # cp bee-encode/build/libs/bee-encode-*.jar xpra-client/xpra-common/libs/
           
       # 10. Build xpra-client module using published or local artifacts
       - name: Build xpra-client
