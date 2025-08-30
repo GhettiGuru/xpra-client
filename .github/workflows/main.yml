@@ -69,8 +69,8 @@ jobs:
       - name: Copy dependency jars to xpra-client libs
         run: |
          mkdir -p xpra-client/libs
-         cp rencode4j/build/libs/rencode4j-*.jar xpra-client/libs/
-         cp bee-encode/build/libs/bee-encode-*.jar xpra-client/libs/
+         cp rencode4j/build/libs/rencode4j-*.jar xpra-client/3rdparty/grafika/libs/
+         cp bee-encode/build/libs/bee-encode-*.jar xpra-client/3rdparty/grafika/libs/
 
       # Build xpra-client module which depends on local Maven artifacts
       - name: Build xpra-client
