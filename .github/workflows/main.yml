@@ -62,6 +62,15 @@ jobs:
         working-directory: ./bee-encode
         run: |
           ./gradlew clean build publishToMavenLocal
+          
+    
+     # Copy built jars to xpra-client/libs
+          
+      - name: Copy dependency jars to xpra-client libs
+        run: |
+         mkdir -p xpra-client/libs
+         cp rencode4j/build/libs/rencode4j-*.jar xpra-client/libs/
+         cp bee-encode/build/libs/bee-encode-*.jar xpra-client/libs/
 
       # Build xpra-client module which depends on local Maven artifacts
       - name: Build xpra-client
