@@ -7,6 +7,7 @@ plugins {
 ext {
     versionMajor = 1
     versionMinor = 0
+    kotlin_version = '1.8.22'
 }
 assert ext.versionMinor < 100
 version = "${ext.versionMajor}.${ext.versionMinor}"
@@ -32,12 +33,15 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+
     testOptions {
         unitTests.includeAndroidResources = true
     }
+
     buildFeatures {
         viewBinding true
     }
+
     signingConfigs {
         release {
             storeFile file(project.findProperty('MYAPP_RELEASE_STORE_FILE') ?: System.getenv('KEYSTORE_FILE'))
@@ -46,9 +50,9 @@ android {
             keyPassword project.findProperty('MYAPP_RELEASE_KEY_PASSWORD') ?: System.getenv('KEY_PASSWORD')
             v1SigningEnabled true
             v2SigningEnabled true
-            //v3SigningEnabled false  // Disabled due to compatibility issues, enable if stable in your environment
         }
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -59,16 +63,31 @@ android {
 }
 
 repositories {
-    mavenLocal()
+    mavenLocal() // highest priority for locally published jars
     google()
     mavenCentral()
+    maven {
+        url = uri("https://maven.pkg.github.com/GhettiGuru")
+        credentials {
+            username = findProperty("GH_USERNAME") ?: System.getenv("GH_USERNAME")
+            password = findProperty("GH_TOKEN") ?: System.getenv("GH_TOKEN")
+        }
+    }
 }
 
 dependencies {
+    // Project modules
     implementation project(':xpra-common')
     implementation project(':3rdparty:grafika')
+
+    // Kotlin stdlib
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
+    // Local maven dependencies
+    implementation 'com.github.GhettiGuru:bee-encode:0.3'
+    implementation 'com.github.GhettiGuru:rencode4j:1.2.0'
+
+    // AndroidX / lifecycle / coroutines
     def coroutines_version = '1.4.2'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
@@ -90,19 +109,17 @@ dependencies {
 
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
-    def room_version = "2.4.0"
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-    implementation "androidx.room:room-rxjava2:$room_version"
-
+    // RxJava
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
 
+    // Utilities
     implementation 'com.google.guava:guava:31.0-android'
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.arcao:slf4j-timber:3.2'
 
+    // Testing
     testImplementation 'junit:junit:4.13.1'
     testImplementation 'org.robolectric:robolectric:4.7'
 
