@@ -7,8 +7,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Checkout main repo (xpra-client)
-      - name: Checkout main repo
+      # Checkout main xpra-client repo
+      - name: Checkout xpra-client
         uses: actions/checkout@v3
         with:
           path: xpra-client
@@ -36,11 +36,7 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # Decode keystore
-      - name: Decode keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
-
-      # Cache Gradle
+      # Cache Gradle dependencies and wrapper to speed up builds
       - name: Cache Gradle
         uses: actions/cache@v3
         with:
@@ -48,33 +44,37 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/gradle.lockfile') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-      # Build and publish rencode4j locally
+      # Decode Android signing keystore
+      - name: Decode keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
+
+      # Build and publish rencode4j module locally
       - name: Build and publish rencode4j
         working-directory: ./rencode4j
         run: |
-          ./gradlew build
-          ./gradlew publishToMavenLocal
+          ./gradlew clean build publishToMavenLocal
 
-      # Build and publish bee-encode locally
+      # Build and publish bee-encode module locally
       - name: Build and publish bee-encode
         working-directory: ./bee-encode
         run: |
-          ./gradlew build
-          ./gradlew publishToMavenLocal
+          ./gradlew clean build publishToMavenLocal
 
-      # Build main project (xpra-client) which uses local Maven artifacts
+      # Build xpra-client module which depends on local Maven artifacts
       - name: Build xpra-client
         working-directory: ./xpra-client
         env:
           KEYSTORE_FILE: ../release.keystore
           STORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          ./gradlew build -PkeystoreFile=$KEYSTORE_FILE -PkeystorePassword=$STORE_PASSWORD -PkeyAlias=$KEY_ALIAS -PkeyPassword=$KEY_PASSWORD
+          ./gradlew clean build -PkeystoreFile=$KEYSTORE_FILE -PkeystorePassword=$STORE_PASSWORD -PkeyAlias=$KEY_ALIAS -PkeyPassword=$KEY_PASSWORD
 
-      # Upload APK artifact if applicable
+      # Upload the APK artifact
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
