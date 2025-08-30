@@ -1,60 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Copyright (C) 2020 Jakub Ksiezniak
-
-  This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write to the Free Software Foundation, Inc.,
-  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
--->
-
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-
-    <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="100"
+    android:versionName="1.0"
+    android:compileSdkVersion="34"
+    android:compileSdkVersionCodename="14"
+    package="com.github.jksiezni.xpra"
+    platformBuildVersionCode="34"
+    platformBuildVersionName="14">
+    <uses-sdk
+        android:minSdkVersion="25"
+        android:targetSdkVersion="34" />
+    <!-- Have full network access -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Run foreground service -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- View Wi-Fi connections -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- View network connections -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Run foreground service -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Run foreground service with the type "specialUse" -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!-- Show notifications -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- This app can appear on top of other apps -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-feature
+        android:glEsVersion="0x20000"
+        android:required="true" />
+    <permission
+        android:name="com.github.jksiezni.xpra.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.github.jksiezni.xpra.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
     <application
-        android:name=".XpraApplication"
-        android:icon="@mipmap/ic_launcher"
-        android:allowBackup="true"
-        android:fullBackupContent="@xml/backup_descriptor"
+        android:theme="@style/AppTheme"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
-
+        android:icon="@mipmap/ic_launcher"
+        android:name="com.github.jksiezni.xpra.XpraApplication"
+        android:debuggable="true"
+        android:allowBackup="true"
+        android:extractNativeLibs="false"
+        android:fullBackupContent="@xml/backup_descriptor"
+        android:appComponentFactory="androidx.core.app.CoreComponentFactory">
         <activity
-            android:name=".MainActivity"
-            android:launchMode="singleTask"
             android:label="@string/app_name"
-            android:exported="true">
+            android:name="com.github.jksiezni.xpra.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity android:name="com.github.jksiezni.xpra.view.XpraActivity" />
         <activity
-            android:name=".view.XpraActivity">
-            <!-- android:documentLaunchMode="intoExisting" -->
-        </activity>
-
-        <activity
-            android:name=".ConnectXpraActivity"
-            android:excludeFromRecents="true"
             android:theme="@style/AppTheme.Translucent"
-            android:exported="false"/>
-        
-        <service android:name=".client.XpraService"/>
+            android:name="com.github.jksiezni.xpra.ConnectXpraActivity"
+            android:exported="false"
+            android:excludeFromRecents="true" />
+        <service android:name="com.github.jksiezni.xpra.client.XpraService" />
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:exported="false"
+            android:authorities="com.github.jksiezni.xpra.androidx-startup">
+            <meta-data
+                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+                android:value="androidx.startup" />
+        </provider>
+        <uses-library
+            android:name="androidx.window.extensions"
+            android:required="false" />
+        <uses-library
+            android:name="androidx.window.sidecar"
+            android:required="false" />
+        <service
+            android:name="androidx.room.MultiInstanceInvalidationService"
+            android:exported="false"
+            android:directBootAware="true" />
+        <receiver
+            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+            android:permission="android.permission.DUMP"
+            android:enabled="true"
+            android:exported="true"
+            android:directBootAware="false">
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".client.XpraService"
+            android:foregroundServiceType="remoteMessaging" />
     </application>
-
 </manifest>
