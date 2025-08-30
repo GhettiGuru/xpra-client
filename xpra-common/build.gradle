@@ -1,6 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm'
-    // Apply other needed plugins here, e.g., 'java-library' if this is a library module
+    id 'org.jetbrains.kotlin.jvm' version '1.8.22'
     id 'java-library'
 }
 
@@ -10,14 +9,22 @@ java {
 }
 
 repositories {
-    mavenLocal()
+    mavenLocal() // first so locally published artifacts take priority
     mavenCentral()
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/GhettiGuru")
+        credentials {
+            username = findProperty("GH_USERNAME") ?: System.getenv("GH_USERNAME")
+            password = findProperty("GH_TOKEN") ?: System.getenv("GH_TOKEN")
+        }
+    }
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
-    implementation 'com.github.jksiezni:bee-encode:0.3'
-    implementation 'com.github.jksiezni:rencode4j:1.2.0'
+    implementation 'com.github.GhettiGuru:bee-encode:0.3'
+    implementation 'com.github.GhettiGuru:rencode4j:1.2.0'
     api 'org.slf4j:slf4j-api:1.7.25'
     api 'com.jcraft:jsch:0.1.52'
     testImplementation 'junit:junit:4.13.1'
