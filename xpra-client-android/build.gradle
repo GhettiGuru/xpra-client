@@ -12,6 +12,12 @@ ext {
 assert ext.versionMinor < 100
 version = "${ext.versionMajor}.${ext.versionMinor}"
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace "com.github.jksiezni.xpra"
     compileSdk 34
@@ -41,15 +47,15 @@ android {
     }
 
     signingConfigs {
-    release {
-        storeFile file("xpra-client-android/release.keystore")
-        storePassword System.getenv("STORE_PASSWORD") ?: ...
-        keyAlias System.getenv("KEY_ALIAS") ?: ...
-        keyPassword System.getenv("KEY_PASSWORD") ?: ...
-        v1SigningEnabled true
-        v2SigningEnabled true
+        release {
+            storeFile file(keystoreProperties['storeFile'] ?: 'xpra-client-android/release.keystore')
+            storePassword keystoreProperties['storePassword'] ?: System.getenv("STORE_PASSWORD") ?: ""
+            keyAlias keystoreProperties['keyAlias'] ?: System.getenv("KEY_ALIAS") ?: ""
+            keyPassword keystoreProperties['keyPassword'] ?: System.getenv("KEY_PASSWORD") ?: ""
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
     }
-}
 
     buildTypes {
         release {
@@ -59,7 +65,6 @@ android {
         }
     }
 
-    // Native libraries packaging configuration (recommended for AGP 7+)
     packagingOptions {
         jniLibs {
             useLegacyPackaging = false
@@ -73,7 +78,6 @@ repositories {
     mavenLocal()
     maven { url 'https://jitpack.io' }
 
-    // GitHub Packages for bee-encode
     maven {
         url = uri("https://maven.pkg.github.com/GhettiGuru/bee-encode")
         credentials {
@@ -82,7 +86,6 @@ repositories {
         }
     }
 
-    // GitHub Packages for rencode4j
     maven {
         url = uri("https://maven.pkg.github.com/GhettiGuru/rencode4j")
         credentials {
@@ -143,21 +146,4 @@ dependencies {
 
     implementation 'com.google.guava:guava:33.0.0-android'
     implementation 'com.jakewharton.timber:timber:5.0.1'
-
-    def junit_version = '4.13.2'
-    def robolectric_version = '4.12.1'
-    def androidx_test_version = '1.5.0'
-    def espresso_version = '3.5.1'
-    def mockito_version = '4.11.0'
-
-    testImplementation "junit:junit:$junit_version"
-    testImplementation "org.robolectric:robolectric:$robolectric_version"
-
-    androidTestImplementation "androidx.test:core:$androidx_test_version"
-    androidTestImplementation "androidx.test:rules:$androidx_test_version"
-    androidTestImplementation "androidx.test:runner:$androidx_test_version"
-    androidTestImplementation "androidx.test:core-ktx:$androidx_test_version"
-    androidTestImplementation "androidx.test.ext:junit-ktx:1.1.5"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
-    androidTestImplementation "org.mockito:mockito-android:$mockito_version"
 }
