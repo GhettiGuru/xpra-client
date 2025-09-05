@@ -6,6 +6,7 @@
     android:versionName="1.0"
     android:compileSdkVersion="34"
     android:compileSdkVersionCodename="14"
+    package="com.github.jksiezni.xpra"
     platformBuildVersionCode="34"
     platformBuildVersionName="14">
 
@@ -15,16 +16,22 @@
 
     <!-- Have full network access -->
     <uses-permission android:name="android.permission.INTERNET" />
+
     <!-- Run foreground service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <!-- View Wi-Fi connections -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
     <!-- View network connections -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <!-- Run foreground service with the type "specialUse" -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
     <!-- Show notifications -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <!-- This app can appear on top of other apps -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
@@ -54,6 +61,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name="com.github.jksiezni.xpra.view.XpraActivity" />
         <activity
             android:theme="@style/AppTheme.Translucent"
@@ -61,14 +69,11 @@
             android:exported="false"
             android:excludeFromRecents="true" />
 
-        <!-- Declare the service normally -->
-        <service
-            android:name="com.github.jksiezni.xpra.client.XpraService"
-            android:foregroundServiceType="remoteMessaging" />
+        <service android:name="com.github.jksiezni.xpra.client.XpraService" />
 
-        <!-- Remove duplicate service declaration -->
         <service
             android:name=".client.XpraService"
+            android:foregroundServiceType="remoteMessaging"
             tools:node="remove" />
 
         <provider
