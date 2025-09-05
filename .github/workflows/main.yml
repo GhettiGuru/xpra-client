@@ -58,18 +58,22 @@ jobs:
           </project>
           EOF
 
-      # 5. Decode Android signing keystore and save in correct directory
+      # 5. Decode Android signing keystore and save with .jks extension inside module
       - name: Decode Keystore from secret
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
+        working-directory: xpra-client/xpra-client-android
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.jks
 
+      # 6. Build APK Release - CompleteNormal
       - name: Build APK Release - CompleteNormal
         working-directory: xpra-client
         env:
-         KEYSTORE_PATH: ${{ github.workspace }}/xpra-client/xpra-client-android/release.keystore
-         KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
-         KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-         KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
-        run: ./gradlew build
+          KEYSTORE_PATH: ${{ github.workspace }}/xpra-client/xpra-client-android/release.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }} # if different, create a separate secret
+          GH_USERNAME: ${{ secrets.GH_USERNAME }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: ./gradlew :xpra-client-android:assembleCompleteNormalRelease -PdisableAnalytics=true
 
       # 7. Upload the signed APK artifact
       - name: Upload APK artifact
