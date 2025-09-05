@@ -10,7 +10,9 @@ jobs:
       # 1. Checkout main repo into xpra-client folder
       - name: Checkout xpra-client
         uses: actions/checkout@v3
-
+        with:
+          path: xpra-client
+          
       # 2. Setup JDK 17
       - name: Setup JDK 17
         uses: actions/setup-java@v3
