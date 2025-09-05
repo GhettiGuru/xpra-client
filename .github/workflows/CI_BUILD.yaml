@@ -1,0 +1,86 @@
+name: Android CI
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout main xpra-client repo
+      - name: Checkout xpra-client
+        uses: actions/checkout@v3
+        with:
+          path: xpra-client
+
+      # 2. Setup JDK 17
+      - name: Setup JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # 3. Cache Gradle dependencies and wrapper
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/gradle.lockfile') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # 4. Install local JARs to Maven repo
+      - name: Install local JARs to Maven repo
+        run: |
+          # bee-encode
+          mkdir -p ~/.m2/repository/com/github/GhettiGuru/bee-encode/0.3/
+          cp xpra-client/libs/bee-encode-0.3.jar ~/.m2/repository/com/github/GhettiGuru/bee-encode/0.3/bee-encode-0.3.jar
+          cat > ~/.m2/repository/com/github/GhettiGuru/bee-encode/0.3/bee-encode-0.3.pom <<EOF
+          <project>
+            <modelVersion>4.0.0</modelVersion>
+            <groupId>com.github.GhettiGuru</groupId>
+            <artifactId>bee-encode</artifactId>
+            <version>0.3</version>
+          </project>
+          EOF
+
+          # rencode4j
+          mkdir -p ~/.m2/repository/com/github/GhettiGuru/rencode4j/1.2.0/
+          cp xpra-client/libs/rencode4j-1.2.0.jar ~/.m2/repository/com/github/GhettiGuru/rencode4j/1.2.0/rencode4j-1.2.0.jar
+          cat > ~/.m2/repository/com/github/GhettiGuru/rencode4j/1.2.0/rencode4j-1.2.0.pom <<EOF
+          <project>
+            <modelVersion>4.0.0</modelVersion>
+            <groupId>com.github.GhettiGuru</groupId>
+            <artifactId>rencode4j</artifactId>
+            <version>1.2.0</version>
+          </project>
+          EOF
+
+      # 5. Decode Android signing keystore
+      - name: Decode keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > xpra-client/xpra-client-android/release.keystore
+
+      # 6. Build xpra-client module using local artifacts
+      - name: Build xpra-client
+        working-directory: ./xpra-client
+        env:
+          KEYSTORE_FILE: xpra-client-android/release.keystore
+          STORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          GH_USERNAME: ${{ secrets.GH_USERNAME }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          export GRADLE_USER_HOME="$RUNNER_TEMP/.gradle"
+          ./gradlew clean build \
+            -PkeystoreFile=$KEYSTORE_FILE \
+            -PkeystorePassword=$STORE_PASSWORD \
+            -PkeyAlias=$KEY_ALIAS \
+            -PkeyPassword=$KEY_PASSWORD
+
+      # 7. Upload the APK artifact
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: xpra-client/app/build/outputs/apk/release/*.apk
