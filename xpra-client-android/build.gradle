@@ -41,15 +41,15 @@ android {
     }
 
     signingConfigs {
-        release {
-            storeFile file(project.findProperty('MYAPP_RELEASE_STORE_FILE') ?: System.getenv('KEYSTORE_FILE'))
-            storePassword project.findProperty('MYAPP_RELEASE_STORE_PASSWORD') ?: System.getenv('STORE_PASSWORD')
-            keyAlias project.findProperty('MYAPP_RELEASE_KEY_ALIAS') ?: System.getenv('KEY_ALIAS')
-            keyPassword project.findProperty('MYAPP_RELEASE_KEY_PASSWORD') ?: System.getenv('KEY_PASSWORD')
-            v1SigningEnabled true
-            v2SigningEnabled true
-        }
+    release {
+        storeFile file("xpra-client-android/release.keystore")
+        storePassword System.getenv("STORE_PASSWORD") ?: ...
+        keyAlias System.getenv("KEY_ALIAS") ?: ...
+        keyPassword System.getenv("KEY_PASSWORD") ?: ...
+        v1SigningEnabled true
+        v2SigningEnabled true
     }
+}
 
     buildTypes {
         release {
