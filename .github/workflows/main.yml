@@ -73,7 +73,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }} # if different, create a separate secret
           GH_USERNAME: ${{ secrets.GH_USERNAME }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: ./gradlew :xpra-client-android:assembleCompleteNormalRelease -PdisableAnalytics=true
+        run: ./gradlew build
 
       # 7. Upload the signed APK artifact
       - name: Upload APK artifact
