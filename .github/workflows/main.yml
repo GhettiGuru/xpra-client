@@ -58,9 +58,9 @@ jobs:
 
       # 5. Decode Android signing keystore and save it inside xpra-client/xpra-client-android
       - name: Decode Keystore from secret
-        working-directory: xpra-client/xpra-client-android
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.jks
-
+        working-directory: xpra-client
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > xpra-client-android/release.jks
+  
       # 6. Build APK Release
       - name: Build APK Release
         working-directory: xpra-client
