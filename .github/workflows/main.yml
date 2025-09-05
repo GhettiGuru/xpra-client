@@ -60,7 +60,7 @@ jobs:
 
       # 5. Decode Android signing keystore and save with .jks extension inside module
       - name: Decode Keystore from secret
-        working-directory: ${{ github.workspace }}/xpra-client-android
+        working-directory: xpra-client-android
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.jks
 
       # 6. Build APK Release - CompleteNormal
