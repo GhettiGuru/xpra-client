@@ -30,6 +30,11 @@ android {
         versionName version
         archivesBaseName = "${project.name}-$versionName"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // Optional manifest placeholders if needed (usually not necessary)
+        // manifestPlaceholders = [
+        //     platformBuildVersionCode: "34",
+        //     platformBuildVersionName: "14"
+        // ]
     }
 
     compileOptions {
@@ -48,15 +53,13 @@ android {
 
     signingConfigs {
         release {
-            storeFile file(System.getenv('KEYSTORE_PATH') ?: 'xpra-client-android/release.jks')
-            storePassword System.getenv("KEYSTORE_PASSWORD")
-            keyAlias System.getenv("KEY_ALIAS")
-            keyPassword System.getenv("KEY_PASSWORD")
-
-            // Enable only v1 and v3 signing
+            storeFile file(System.getenv('KEYSTORE_PATH') ?: keystoreProperties['storeFile'] ?: 'default_keystore_path')
+            storePassword System.getenv('KEYSTORE_PASSWORD') ?: keystoreProperties['storePassword'] ?: ''
+            keyAlias System.getenv('KEY_ALIAS') ?: keystoreProperties['keyAlias'] ?: ''
+            keyPassword System.getenv('KEY_PASSWORD') ?: keystoreProperties['keyPassword'] ?: ''
             enableV1Signing true
-            enableV2Signing false
             enableV3Signing true
+            enableV2Signing false
             enableV4Signing false
         }
     }
@@ -70,9 +73,7 @@ android {
     }
 
     packagingOptions {
-        jniLibs {
-            useLegacyPackaging = false
-        }
+        jniLibs.useLegacyPackaging = false
     }
 }
 
