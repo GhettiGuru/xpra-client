@@ -7,7 +7,6 @@ plugins {
 ext {
     versionMajor = 1
     versionMinor = 0
-    // Updated Kotlin version for stability and new features.
     kotlin_version = '1.9.23'
 }
 assert ext.versionMinor < 100
@@ -15,12 +14,10 @@ version = "${ext.versionMajor}.${ext.versionMinor}"
 
 android {
     namespace "com.github.jksiezni.xpra"
-    // Updated compileSdk to the latest stable version.
     compileSdk 34
 
     defaultConfig {
         applicationId "com.github.jksiezni.xpra"
-        // Updated minSdk to a more modern and widely supported version.
         minSdk 25
         targetSdk 34
         versionCode versionMajor * 100 + versionMinor
@@ -33,6 +30,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = '17'
     }
@@ -60,6 +58,13 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    // Native libraries packaging configuration (recommended for AGP 7+)
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = false
+        }
+    }
 }
 
 repositories {
@@ -67,6 +72,7 @@ repositories {
     mavenCentral()
     mavenLocal()
     maven { url 'https://jitpack.io' }
+
     // GitHub Packages for bee-encode
     maven {
         url = uri("https://maven.pkg.github.com/GhettiGuru/bee-encode")
@@ -87,27 +93,20 @@ repositories {
 }
 
 dependencies {
-    // Project modules
     implementation project(':xpra-common')
     implementation project(':3rdparty:grafika')
 
-    // Kotlin stdlib
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    // GitHub Packages dependencies
     implementation 'com.github.GhettiGuru:bee-encode:0.3'
     implementation 'com.github.GhettiGuru:rencode4j:1.2.0'
     implementation 'com.arcao:slf4j-timber:3.1'
 
-    // AndroidX / lifecycle / coroutines
-    // Updated coroutines to a newer stable version.
     def coroutines_version = '1.7.3'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
-    // The rx2 dependency is no longer actively maintained, consider removing if not necessary.
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx2:$coroutines_version"
 
-    // Updated AndroidX dependencies to their latest stable versions.
     def core_ktx_version = '1.12.0'
     def appcompat_version = '1.6.1'
     def preference_ktx_version = '1.2.1'
@@ -126,36 +125,25 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
 
-    // Lifecycle
-    // Updated lifecycle dependencies to their latest stable versions.
     def lifecycle_version = "2.7.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
-    // Room database + RxJava2
-    // Updated Room dependencies to the latest stable version.
     def room_version = "2.6.1"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     implementation "androidx.room:room-rxjava2:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
-    // RxJava / RxKotlin
-    // These versions are a bit old but kept them as is since they might be a hard dependency.
     implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation "io.reactivex.rxjava2:rxkotlin:2.4.0"
 
-
-    // Utilities
-    // Guava and Timber are updated.
     implementation 'com.google.guava:guava:33.0.0-android'
     implementation 'com.jakewharton.timber:timber:5.0.1'
 
-    // Testing
-    // Updated testing dependencies to their latest stable versions.
     def junit_version = '4.13.2'
     def robolectric_version = '4.12.1'
     def androidx_test_version = '1.5.0'
