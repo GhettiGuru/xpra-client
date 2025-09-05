@@ -58,24 +58,19 @@ jobs:
         </project>
         EOF
 
-    # 6. Build and sign the xpra-client module
-    - name: Build xpra-client
-      working-directory: ./xpra-client
-      env:
-        STORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
-        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-        KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }} # if different, create a new secret
-        GH_USERNAME: ${{ secrets.GH_USERNAME }}
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+    - name: Decode Keystore from secret
       run: |
-        export GRADLE_USER_HOME="$RUNNER_TEMP/.gradle"
-        ./gradlew build 
-          env:
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > keystore.jks
+          working-directory: xpra-client-android
+
+    - name: Build APK Release - CompleteNormal
+      run: ./gradlew assembleCompleteNormalRelease -PdisableAnalytics=true
+      working-directory: xpra-client-android 
+      env:
           KEYSTORE_PATH: ${{ github.workspace }}/island/keystore.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          
 
     # 7. Upload the signed APK artifact
     - name: Upload APK artifact
