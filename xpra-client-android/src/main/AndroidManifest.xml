@@ -4,7 +4,6 @@
     android:versionName="1.0"
     android:compileSdkVersion="34"
     android:compileSdkVersionCodename="14"
-    package="com.github.jksiezni.xpra"
     platformBuildVersionCode="34"
     platformBuildVersionName="14">
     <uses-sdk
