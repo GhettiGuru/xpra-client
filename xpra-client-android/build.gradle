@@ -48,12 +48,16 @@ android {
 
     signingConfigs {
         release {
-            storeFile file(keystoreProperties['storeFile'] ?: 'xpra-client-android/release.keystore')
-            storePassword keystoreProperties['storePassword'] ?: System.getenv("STORE_PASSWORD") ?: ""
-            keyAlias keystoreProperties['keyAlias'] ?: System.getenv("KEY_ALIAS") ?: ""
-            keyPassword keystoreProperties['keyPassword'] ?: System.getenv("KEY_PASSWORD") ?: ""
-            v1SigningEnabled true
-            v2SigningEnabled true
+            storeFile file(System.getenv("KEYSTORE_PATH") ?: "keystore.jks")
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
+
+            // Enable only v1 and v3 signing
+            enableV1Signing true
+            enableV2Signing false
+            enableV3Signing true
+            enableV4Signing false
         }
     }
 
