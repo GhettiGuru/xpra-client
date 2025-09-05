@@ -1,8 +1,6 @@
 name: Android CI
-
 on:
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -31,28 +29,28 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # 4. Install local JARs to Maven repository with minimal POMs
+      # 4. Install local JARs to Maven repo
       - name: Install local JARs to Maven repo
         run: |
           # bee-encode
-          mkdir -p ~/.m2/repository/com/ghetiguru/bee-encode/0.3-SNAPSHOT/
-          cp xpra-client/libs/bee-encode-0.3-SNAPSHOT.jar ~/.m2/repository/com/ghetiguru/bee-encode/0.3-SNAPSHOT/bee-encode-0.3-SNAPSHOT.jar
-          cat > ~/.m2/repository/com/ghetiguru/bee-encode/0.3-SNAPSHOT/bee-encode-0.3-SNAPSHOT.pom <<EOF
+          mkdir -p ~/.m2/repository/com/github/GhettiGuru/bee-encode/0.3/
+          cp xpra-client/libs/bee-encode-0.3.jar ~/.m2/repository/com/github/GhettiGuru/bee-encode/0.3/bee-encode-0.3.jar
+          cat > ~/.m2/repository/com/github/GhettiGuru/bee-encode/0.3/bee-encode-0.3.pom <<EOF
           <project>
             <modelVersion>4.0.0</modelVersion>
-            <groupId>com.ghetiguru</groupId>
+            <groupId>com.github.GhettiGuru</groupId>
             <artifactId>bee-encode</artifactId>
-            <version>0.3-SNAPSHOT</version>
+            <version>0.3</version>
           </project>
           EOF
 
           # rencode4j
-          mkdir -p ~/.m2/repository/com/ghetiguru/rencode4j/1.2.0/
-          cp xpra-client/libs/rencode4j-1.2.0.jar ~/.m2/repository/com/ghetiguru/rencode4j/1.2.0/rencode4j-1.2.0.jar
-          cat > ~/.m2/repository/com/ghetiguru/rencode4j/1.2.0/rencode4j-1.2.0.pom <<EOF
+          mkdir -p ~/.m2/repository/com/github/GhettiGuru/rencode4j/1.2.0/
+          cp xpra-client/libs/rencode4j-1.2.0.jar ~/.m2/repository/com/github/GhettiGuru/rencode4j/1.2.0/rencode4j-1.2.0.jar
+          cat > ~/.m2/repository/com/github/GhettiGuru/rencode4j/1.2.0/rencode4j-1.2.0.pom <<EOF
           <project>
             <modelVersion>4.0.0</modelVersion>
-            <groupId>com.ghetiguru</groupId>
+            <groupId>com.github.GhettiGuru</groupId>
             <artifactId>rencode4j</artifactId>
             <version>1.2.0</version>
           </project>
