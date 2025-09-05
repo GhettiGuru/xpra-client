@@ -31,18 +31,32 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # 4. Copy pre-built jars to the local Maven repository
-      - name: Copy local JARs to Maven repository
+      # 4. Install local JARs to Maven repository with minimal POMs
+      - name: Install local JARs to Maven repo
         run: |
-          # Create the directory structure for rencode4j
-          mkdir -p ~/.m2/repository/com/ghetiguru/rencode4j/1.2.0/
-          # Copy the pre-built jar to the new directory
-          cp xpra-client/libs/rencode4j-1.2.0.jar ~/.m2/repository/com/ghetiguru/rencode4j/1.2.0/rencode4j-1.2.0.jar
-
-          # Create the directory structure for bee-encode
+          # bee-encode
           mkdir -p ~/.m2/repository/com/ghetiguru/bee-encode/0.3-SNAPSHOT/
-          # Copy the pre-built jar to the new directory
           cp xpra-client/libs/bee-encode-0.3-SNAPSHOT.jar ~/.m2/repository/com/ghetiguru/bee-encode/0.3-SNAPSHOT/bee-encode-0.3-SNAPSHOT.jar
+          cat > ~/.m2/repository/com/ghetiguru/bee-encode/0.3-SNAPSHOT/bee-encode-0.3-SNAPSHOT.pom <<EOF
+          <project>
+            <modelVersion>4.0.0</modelVersion>
+            <groupId>com.ghetiguru</groupId>
+            <artifactId>bee-encode</artifactId>
+            <version>0.3-SNAPSHOT</version>
+          </project>
+          EOF
+
+          # rencode4j
+          mkdir -p ~/.m2/repository/com/ghetiguru/rencode4j/1.2.0/
+          cp xpra-client/libs/rencode4j-1.2.0.jar ~/.m2/repository/com/ghetiguru/rencode4j/1.2.0/rencode4j-1.2.0.jar
+          cat > ~/.m2/repository/com/ghetiguru/rencode4j/1.2.0/rencode4j-1.2.0.pom <<EOF
+          <project>
+            <modelVersion>4.0.0</modelVersion>
+            <groupId>com.ghetiguru</groupId>
+            <artifactId>rencode4j</artifactId>
+            <version>1.2.0</version>
+          </project>
+          EOF
 
       # 5. Decode Android signing keystore
       - name: Decode keystore
