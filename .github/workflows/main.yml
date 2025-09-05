@@ -58,13 +58,14 @@ jobs:
           
       # 5. Decode Android signing keystore
       - name: Decode keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > xpra-client/release.keystore
 
-      # 6. Build xpra-client module using local artifacts
+    # The output path has been updated to place the keystore in the correct module directory.
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > xpra-client/xpra-client-android/release.keystore
+  # 6. Build xpra-client module using local artifacts
       - name: Build xpra-client
         working-directory: ./xpra-client
         env:
-          KEYSTORE_FILE: release.keystore
+          KEYSTORE_FILE: ../release.keystore
           STORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -77,7 +78,6 @@ jobs:
             -PkeystorePassword=$STORE_PASSWORD \
             -PkeyAlias=$KEY_ALIAS \
             -PkeyPassword=$KEY_PASSWORD
-
       # 7. Upload the APK artifact
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
