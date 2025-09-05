@@ -63,7 +63,8 @@ jobs:
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.jks
 
       # 6. Build APK Release - CompleteNormal
-      - name: Build APK Release - CompleteNormal
+      - name: Build APK Release
+        working-directory: xpra-client
         env:
           KEYSTORE_PATH: ${{ github.workspace }}/xpra-client/xpra-client-android/release.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
