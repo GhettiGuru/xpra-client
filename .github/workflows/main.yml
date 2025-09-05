@@ -69,7 +69,7 @@ jobs:
             KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
             KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
             KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
-        run: ./gradlew build -PdisableAnalytics=true
+        run: gradle wrapper && ./gradlew build
 
 
       # 7. Upload the signed APK artifact
