@@ -62,15 +62,14 @@ jobs:
       - name: Decode Keystore from secret
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
 
-      # 6. Build APK Release - CompleteNormal
       - name: Build APK Release - CompleteNormal
+        working-directory: xpra-client
         env:
-            KEYSTORE_PATH: ${{ github.workspace }}/xpra-client/xpra-client-android/release.keystore
-            KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
-            KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-            KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
-        run: gradle wrapper && ./gradlew build
-
+         KEYSTORE_PATH: ${{ github.workspace }}/xpra-client/xpra-client-android/release.keystore
+         KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
+         KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+         KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
+        run: ./gradlew build
 
       # 7. Upload the signed APK artifact
       - name: Upload APK artifact
