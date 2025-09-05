@@ -34,6 +34,10 @@
     <!-- This app can appear on top of other apps -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
+    <uses-feature
+        android:glEsVersion="0x20000"
+        android:required="true" />
+
     <permission
         android:name="com.github.jksiezni.xpra.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
         android:protectionLevel="signature" />
