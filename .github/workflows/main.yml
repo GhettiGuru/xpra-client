@@ -6,7 +6,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       # 1. Checkout main xpra-client repo
       - name: Checkout xpra-client
@@ -14,30 +13,14 @@ jobs:
         with:
           path: xpra-client
 
-      # 2. Checkout rencode4j repo
-      - name: Checkout rencode4j
-        uses: actions/checkout@v3
-        with:
-          repository: GhettiGuru/rencode4j
-          path: rencode4j
-          token: ${{ secrets.GH_TOKEN }}
-
-      # 3. Checkout bee-encode repo
-      - name: Checkout bee-encode
-        uses: actions/checkout@v3
-        with:
-          repository: GhettiGuru/bee-encode
-          path: bee-encode
-          token: ${{ secrets.GH_TOKEN }}
-
-      # 4. Setup JDK 17
+      # 2. Setup JDK 17
       - name: Setup JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: 17
 
-      # 5. Cache Gradle dependencies and wrapper
+      # 3. Cache Gradle dependencies and wrapper
       - name: Cache Gradle
         uses: actions/cache@v3
         with:
@@ -48,41 +31,24 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # 6. Decode Android signing keystore
+      # 4. Copy pre-built jars to the local Maven repository
+      - name: Copy local JARs to Maven repository
+        run: |
+          # Create the directory structure for rencode4j
+          mkdir -p ~/.m2/repository/com/ghetiguru/rencode4j/1.2.0/
+          # Copy the pre-built jar to the new directory
+          cp xpra-client/libs/rencode4j-1.2.0.jar ~/.m2/repository/com/ghetiguru/rencode4j/1.2.0/rencode4j-1.2.0.jar
+
+          # Create the directory structure for bee-encode
+          mkdir -p ~/.m2/repository/com/ghetiguru/bee-encode/0.3-SNAPSHOT/
+          # Copy the pre-built jar to the new directory
+          cp xpra-client/libs/bee-encode-0.3-SNAPSHOT.jar ~/.m2/repository/com/ghetiguru/bee-encode/0.3-SNAPSHOT/bee-encode-0.3-SNAPSHOT.jar
+
+      # 5. Decode Android signing keystore
       - name: Decode keystore
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
 
-      # 7. Build and publish rencode4j to GitHub Packages
-    #  - name: Publish rencode4j to GitHub Packages
-     #   working-directory: ./rencode4j
-        #env:
-         # GH_USERNAME: ${{ secrets.GH_USERNAME }}
-          #GH_TOKEN: ${{ secrets.GH_TOKEN }}
-       # run: |
-         # export GRADLE_USER_HOME="$RUNNER_TEMP/.gradle"
-        #  ./gradlew build publish
-
-      # 8. Build and publish bee-encode to GitHub Packages
-    #  - name: Publish bee-encode to GitHub Packages
-        #working-directory: ./bee-encode
-       # env:
-         # GH_USERNAME: ${{ secrets.GH_USERNAME }}
-       #   GH_TOKEN: ${{ secrets.GH_TOKEN }}
-       # run: |
-         # export GRADLE_USER_HOME="$RUNNER_TEMP/.gradle"
-          #./gradlew build publish
-
-      # 9. Copy built jars to xpra-client libs (optional, fallback)
-     # - name: Copy dependency jars to xpra-client libs
-       # run: |
-       #   mkdir -p xpra-client/3rdparty/grafika/libs/
-          #cp rencode4j/build/libs/rencode4j-*.jar xpra-client/3rdparty/grafika/libs/
-       #   cp bee-encode/build/libs/bee-encode-*.jar xpra-client/3rdparty/grafika/libs/
-          #mkdir -p xpra-client/xpra-common/libs/
-          #cp rencode4j/build/libs/rencode4j-*.jar xpra-client/xpra-common/libs/
-         # cp bee-encode/build/libs/bee-encode-*.jar xpra-client/xpra-common/libs/
-          
-      # 10. Build xpra-client module using published or local artifacts
+      # 6. Build xpra-client module using local artifacts
       - name: Build xpra-client
         working-directory: ./xpra-client
         env:
@@ -100,7 +66,7 @@ jobs:
             -PkeyAlias=$KEY_ALIAS \
             -PkeyPassword=$KEY_PASSWORD
 
-      # 11. Upload the APK artifact
+      # 7. Upload the APK artifact
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
