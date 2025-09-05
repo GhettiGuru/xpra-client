@@ -67,7 +67,7 @@ jobs:
       - name: Build APK Release
         working-directory: xpra-client
         env:
-          KEYSTORE_PATH: ${{ github.workspace }}/xpra-client-android/release.jks
+          KEYSTORE_PATH: xpra-client/xpra-client-android/release.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASS }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEYSTORE_PASS }} # if different, create a separate secret
